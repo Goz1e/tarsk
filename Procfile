@@ -1,1 +1,2 @@
-web : gunicorn tarsk.wsgi
+
+web: gunicorn tarsk.wsgi
