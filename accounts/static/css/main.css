@@ -1,0 +1,19 @@
+
+body{
+	background-image: url('/static/images/background2.jpg');
+	background-size: cover;
+	height: 100vh;
+	background-attachment: fixed;
+}
+
+.card,.form-control{
+	background-color: transparent;
+	border-color:rgb(117, 117, 117);
+}
+
+.card-header-tabs .nav-link.active {
+    background-color: transparent;
+    border-color:rgb(117, 117, 117);
+	border-bottom-color:transparent;
+
+}

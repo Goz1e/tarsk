@@ -1,0 +1,39 @@
+{% extends "accounts/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+{% load static %}
+<br>
+
+  <div class="d-flex justify-content-center">
+    <p class="fw-light">dashboard - {{request.user.email}}</p>
+  </div>
+
+  {% if user_qs == None %}
+  
+  <div class="row  pt-3 pb-4  shadow rounded">
+    <div id="imgdiv" class="col-sm-5 text-center">
+          <img class="thumbnail img-responsive" src="{% static '/images/index.svg' %}" 
+              style="max-width:100%;height: auto;max-height: 100%;"> 
+   </div>
+    <div class="col-sm-5 text-center">
+      <p><h2 class="">{% lorem 7 w %}</h2></p>
+      <a class="btn btn-primary" href="{% url 'task:create_task' %}"> create task</a>
+    </div>
+  </div>
+
+  {% else %}
+
+  <div class="d-flex justify-content-around flex-wrap mb-3">
+    {% for task in user_qs %}
+    
+      {% include "task/card_template.html" with task=task %}
+      
+    {% endfor %}
+  </div>
+
+  {% endif %}
+
+  
+  
+{% endblock %}
+

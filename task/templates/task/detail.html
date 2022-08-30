@@ -1,0 +1,142 @@
+{% extends "accounts/base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+
+<br><br>
+
+<div class="card text-center border-0 shadow">
+    <div class="card-header">
+      <ul class=" d-flex nav nav-tabs  card-header-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="true" href="#">Active</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'task:update' slug=task.slug %}">update</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">due date : {{task.deadline}}</a>
+        </li>
+        <li class="nav-item">
+          <p class="nav-link disabled" aria-current="false" > id : {{task.slug}}</p>
+        </li>
+        <li class="nav-item ms-auto">
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Delete
+          </button>
+          
+          <!-- Modal -->
+          <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Confirm action!</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <p> Delete {{task.title}}?</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                  <a class="btn btn-primary" href="{% url 'task:delete' slug=task.slug %}" role="button">Confirm</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+        
+      </ul>
+      
+    </div>
+    <div class="card-body border-0">
+      <h5 class="card-title">{{task.title}}</h5>
+      <p class="card-text">{{task.description}}</p>
+      {% if task.completed %}
+      <a href="{{ task.completed_url }}" class="btn btn-primary disabled ">completed</a>
+      {% else %}
+      <a href="{{ task.completed_url }}" class="btn btn-primary">completed</a>
+      {% endif %}
+    </div>
+</div>
+
+<br>
+
+<div class="card text-center border-0 shadow">
+    <div class="card-header">
+      <ul class="nav nav-tabs card-header-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="true" href="#">Comments</a>
+        </li>
+
+      </ul>
+    </div>
+    <div class="card-body border-0">
+      
+      {% for comment in comments %}
+      <div class="d-flex row">
+
+        <div class="col-sm-7 small">
+          <p class="card-text">{{comment.text}}</p>
+        </div>
+        <div class='col-sm-4'>
+          <p class="small">|| by: {{comment.author}} <small>( {{comment.time_stamp | timesince}} ago ) </small> </p> 
+        </div>
+        <div class="col-sm-1 mx-auto">
+          <a href="{% url 'task:delete_comment' id=comment.id %}"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-minus" width="12" height="12" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <circle cx="12" cy="12" r="9" />
+            <line x1="9" y1="12" x2="15" y2="12" />
+          </svg></a>
+        </div>
+        
+      </div>
+      {% endfor %}
+      <br><hr>
+      <form method="post" class="form-control-sm w-100 h-50" action="{{ task.add_comment_url }}">
+        {% csrf_token %}
+        {{ comment_form | crispy}}
+        <button class="btn btn-outline-primary btn-sm" type="submit">submit</button>
+      </form>
+      
+    </div>
+</div>
+
+<br>
+
+<div class="card text-center shadow border-0">
+    <div class="card-header">
+      <ul class="nav nav-tabs card-header-tabs  gap-2">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="true" href="#">Dependencies</a>
+        </li>
+        
+        <li class="nav-item">
+          <form class="d-flex" method="post" action="{% url 'task:update_collab' slug=task.slug %}">
+            {% csrf_token %}
+            <input class="form-control me-2" list="qs" placeholder="Add collaborator" name="collab_add_form">
+            <button class="btn btn-outline-primary" >submit</button>
+            <datalist id="qs">
+              {% for user in qs%}
+              <option value="{{user.profile.first_name}}"></option>
+              {% endfor %}
+            </datalist>
+          </form>
+        </li>
+      </ul>
+    </div>
+    <div class="card-body">
+      <div class="d-flex justify-content-around flex-wrap mb-3">
+        {% for task in dep_qs %}
+        
+          {% include "task/card_template.html" with task=task %}
+          
+        {% endfor %}
+      </div>
+      
+    </div>
+</div>
+
+<br><br>
+
+{% endblock %}

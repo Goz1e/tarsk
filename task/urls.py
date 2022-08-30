@@ -1,0 +1,20 @@
+from django import views
+from django.urls import path
+from .views import *
+
+app_name= 'task'
+urlpatterns = [
+    #the index view points to a separate account app
+    path('', dashboard, name='dashboard'),
+    path('search/', search, name='search'),
+    path('create/', create_task, name='create_task'),
+    path('<slug:slug>/', detail, name='detail'),
+    path('<slug:slug>/update/', update, name='update'),
+    path('<slug:slug>/completed/', completed, name='completed'),
+    path('<slug:slug>/add_comment/', add_comment, name='add_comment'),
+    path('<slug:slug>/update-dependencies/', update_dependencies, name='update_dependencies'),
+    path('<slug:slug>/collaborators/', update_collab, name='update_collab'),
+    path('<slug:slug>/delete/', delete_task, name='delete'),
+    path('<int:id>/delete-comment/', delete_comment, name='delete_comment'),
+
+]
