@@ -1,0 +1,33 @@
+
+
+
+<div class="card mb-3 shadow" style="max-width: 250px; max-height: 200px; --bs-card-spacer-y: 9px;">
+    <div class="row g-0 h-100" >
+      <div id='img-div' class="col-md-4" style="width:10%; height: auto;">
+        <a href="{{ task.get_absolute_url }}">
+          {% if task.completed %}
+        <img  id= 'side-img' src="https://c4.wallpaperflare.com/wallpaper/743/421/76/geometry-abstract-lines-digital-art-wallpaper-preview.jpg" 
+        class="img-fluid rounded-start" />
+        {% else %}
+        <img  id= 'side-img' src="https://c4.wallpaperflare.com/wallpaper/315/143/577/minimalism-pattern-abstract-lines-wallpaper-preview.jpg" 
+        class="img-fluid rounded-start" />
+        {% endif %}
+        </a>
+      </div>
+      <div class="col-md-8"  style="width:90%;">
+        <div class="card-body mx-auto">
+          <h5 class="card-title" style="font-size:14px;">{{task.title|truncatechars:25}}</h5>
+          <p class="card-text" style="font-size:12px;margin-bottom: 3px;">{{task.description|truncatechars:40}}</p>
+          <p class="card-text" style="font-size:10px;"><small class="">{{request.user.profile}} -- {{task.time_stamp | timesince}} ago <a href="{% url 'task:remove_dep' slug=task.slug dep_id=dep.pk %}">   delete</a></small></p>
+        </div>
+      </div>
+    </div>
+  </div>  
+  
+    
+  <style>
+  #img-div img {
+    height:100%;
+    object-fit: cover;
+  }
+  </style>

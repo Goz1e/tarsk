@@ -48,22 +48,22 @@ class AddCommentForm(forms.ModelForm):
             }
 
 
-class DependenciesForm(forms.ModelForm):
+# class DependenciesForm(forms.ModelForm):
 
-    class Meta:
-        model = Dependencies
-        fields = ['dependent_on']
-        widgets = {
-            'dependent_on':forms.CheckboxSelectMultiple()
-        }
+#     class Meta:
+#         model = Dependencies
+#         fields = ['dependent_on']
+#         widgets = {
+#             'dependent_on':forms.CheckboxSelectMultiple(attrs={'name':'dep_form'})
+#         }
 
 
-class CollabForm(forms.ModelForm):
-    class Meta:
-        model = Collaborators
-        fields = ['users']
-        widgets = {
-            'users':forms.CheckboxSelectMultiple(attrs={'name':'collab_edit_form'})
-        }
+# class CollabForm(forms.ModelForm):
+#     class Meta:
+#         model = Collaborators
+#         fields = ['users']
+#         widgets = {
+#             'users':forms.CheckboxSelectMultiple(attrs={'name':'collab_edit_form'})
+#         }
         
     

@@ -1,10 +1,8 @@
-from contextlib import redirect_stderr
-from glob import glob
-from multiprocessing import context
+from django.shortcuts import get_list_or_404
 from django.shortcuts import get_object_or_404, render,redirect
 from django.contrib.auth.decorators import login_required
 from accounts.models import MyUser, Profile
-from .forms import AddCommentForm, CollabForm, DependenciesForm, TaskCreateForm, TaskUpdateForm
+from .forms import AddCommentForm,TaskCreateForm, TaskUpdateForm
 from .models import Collaborators, Comment, Dependencies, Task
 from django.db.models import Q
 from django.contrib import messages
@@ -59,12 +57,16 @@ def detail(request,slug):
 
     form = AddCommentForm(request.POST or None, instance=task)
 
-    collab = get_object_or_404(Collaborators,primary_task=task)
-    collab_form =CollabForm(request.POST or None,) 
     qs = MyUser.objects.all()
 
+    task_collabs = task.collab.users.all()
+    dep_qs = Task.objects.filter(slug=task.slug)
+    task_dep = task.my_dependencies.dependent_on.all()
+
     context = {'title':f'detail | {task.title}','task':task,'comments':comments,
-    'collab_form':collab_form,'qs':qs,'comment_form':form,}
+    'qs':qs,'comment_form':form, 'collabs':task_collabs,
+    'dep_qs':dep_qs, 'task_dep':task_dep
+    }
     
     try:
         task_qs = Task.objects.filter(slug = task.slug)
@@ -142,10 +144,10 @@ def update_collab(request,slug):
                 profile = get_object_or_404(Profile,first_name = collab_add)
                 user = profile.user
                 if user in collab.users.all():
-                    messages.success(request, f"'{user.email}' already exists")  
+                    messages.success(request, f"'{user.profile.first_name}' already exists")  
                 else:  
                     collab.users.add(user)
-                    messages.success(request, f"'{user.email}' added successfully")
+                    messages.success(request, f"'{user.profile.first_name}' added successfully")
 
             except:
                 messages.info(request, f"'{collab_add}' does not match an existing users")
@@ -215,3 +217,47 @@ def delete_comment(request,id):
     else:
         messages.info(request, "you don't have permission to delete this comment")
     return redirect('task:detail',slug=comment.task.slug)
+
+def remove_collab(request,slug,user_id):
+    user = get_object_or_404(MyUser,id=user_id)
+    task = get_object_or_404(Task,slug=slug)
+    task.collab.users.remove(user)
+    return redirect('task:detail',slug=slug)
+
+
+@login_required(login_url='index')
+def update_dep(request,slug):
+    
+    if request.POST:
+        task = get_object_or_404(Task,slug=slug)
+        dependency = task.my_dependencies
+
+        try:
+            dep_task = get_object_or_404(Task,title=request.POST.get('dep_form'))
+            if dep_task == task:
+                dep_task = None
+                messages.info(request, "you cannot add current task as dependency")
+                return redirect('task:detail',slug=slug)
+
+            if dep_task in dependency.dependent_on.all():
+                messages.success(request, f"'{dep_task}' already exists")  
+            else:  
+                dependency.dependent_on.add(dep_task)
+                messages.success(request, "dependency added successfully")
+        except:
+            
+            messages.success(request, f"failed to add to dependencies")  
+
+    
+        return redirect('task:detail',slug=slug)
+
+def remove_dep(request,slug,dep_id):
+    dep_task = get_object_or_404(Task,id=dep_id)
+    task = get_object_or_404(Task,slug=slug)
+    task.my_dependencies.dependent_on.remove(dep_task)
+    return redirect('task:detail',slug=slug)
+
+def test(request):
+    template_name = 'task/test.html'
+    context = {'title':'test'}
+    return render(request,template_name,context)

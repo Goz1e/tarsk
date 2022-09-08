@@ -56,22 +56,26 @@ def login_view(request):
             else:
                 messages.info(request, "login failed!")
                 
-            return redirect('task:dashboard')
+            return redirect('index')
         
     return render(request, 'accounts/login.html', context={'form': LoginForm,'title':'login'})
 
 
 def edit_profile(request):
     form = ProfileEditForm(request.POST or None, instance=request.user.profile)
-    
+    from_signup = False
+    if request.user.profile.first_name == None:
+        from_signup = True
+
     if request.POST:    
         if form.is_valid():
             profile = form
             profile.save()
             messages.info(request, "profile information updated")
-            if 'user_settings' in request.POST:
-                return redirect('accounts:settings')
-            return redirect('task:dashboard')
+            if from_signup:
+                return redirect('task:dashboard')
+            return redirect('accounts:settings')
+            
         else:
             messages.info(request, "please check provided information")
 

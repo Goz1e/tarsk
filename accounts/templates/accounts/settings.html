@@ -6,16 +6,13 @@
 <div class="container " style="height: 100vh;">
     <br><div class="bg-dark p-2 rounded text-light pl-3"> :: {{user}}</div>  <br>
     
-    <div class="row section p-3 rounded ">
-        <div id="imgdiv" class="col-sm-5 text-center p-3 rounded shadow">
+    <div class="row section p-3 rounded gap-3">
+        <div id="imgdiv" class="col-sm-5 text-center p-3 rounded shadow d-none d-sm-block">
             <img class="thumbnail img-responsive align-self-center"  src="{% static '/images/index.svg' %}" 
                 style="max-width:100%;height: auto;max-height: 100%;"> 
         </div>
 
-        <div class="col-sm-1">
-        </div>
-
-        <div class="col-sm-4 shadow rounded w-50">
+        <div class="col-sm-6 shadow rounded p-3 sm-w-100">
             <form method="post" class="form-control-sm w-100 h-50" action="{% url 'accounts:edit_profile' %}">
             {% csrf_token %}
             {{form | crispy}}
@@ -24,19 +21,17 @@
         </div>
     </div>
 
-    <br><br>
+    <br>
 
     <div class="section h-25 ">
-        <div class="row">
+        <div class="row gap-3">
 
-            <div class="col-sm-5 ">
+            <div class=" d-flex col-sm-5 gap-3" >
                 <a class="btn btn-outline-primary" href="{% url 'password_change' %}" role="button">change password</a>
                 <a class="btn btn-outline-secondary" href="{% url 'password_reset' %}" role="button">reset password</a>            
             </div>
-
-            <div class="col-sm-1"></div>
             
-            <div class="col-sm-4">
+            <div class="d-flex col-sm-5 gap-3">
                 <a class="btn btn-outline-danger" href="{% url 'logout' %}" role="button">logout</a> 
                 
                 <!-- delete account  -->
