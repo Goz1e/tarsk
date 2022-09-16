@@ -1,24 +1,24 @@
 
 
 
-<div class="card mb-3 shadow" style="max-width: 250px; max-height: 200px; --bs-card-spacer-y: 9px;">
+<div class="card mb-3 shadow-sm border-0" style="max-width: 250px; max-height: 200px; --bs-card-spacer-y: 9px;background-color:rgb(238, 237, 237) ;">
     <div class="row g-0 h-100" >
-      <div id='img-div' class="col-md-4" style="width:10%; height: auto;">
-        <a href="{{ task.get_absolute_url }}">
-          {% if task.completed %}
-        <img  id= 'side-img' src="https://c4.wallpaperflare.com/wallpaper/743/421/76/geometry-abstract-lines-digital-art-wallpaper-preview.jpg" 
+      <div id='img-div' class="col-md-4 rounded-start" style="width:10%; height: auto; background-color: brown;">
+        <a href="{{ dep.get_absolute_url }}">
+          {% if dep.completed %}
+        <img  id= 'side-img' src="https://media.istockphoto.com/photos/green-textured-cardboard-background-picture-id1353173739?b=1&k=20&m=1353173739&s=170667a&w=0&h=qgD73m2bobSXB2EYZ4cqmjn2uq3q30LGrEw4W4V3BpI=" 
         class="img-fluid rounded-start" />
         {% else %}
-        <img  id= 'side-img' src="https://c4.wallpaperflare.com/wallpaper/315/143/577/minimalism-pattern-abstract-lines-wallpaper-preview.jpg" 
+        <img  id= 'side-img' src="https://media.istockphoto.com/photos/blue-cotton-fabric-cloth-texture-for-background-natural-textile-picture-id1354827017?k=20&m=1354827017&s=612x612&w=0&h=P0Tk6B0c7usp4XfvSQj7eJwtMQN-8LcHL31Jt1KZjY4=" 
         class="img-fluid rounded-start" />
         {% endif %}
         </a>
       </div>
       <div class="col-md-8"  style="width:90%;">
         <div class="card-body mx-auto">
-          <h5 class="card-title" style="font-size:14px;">{{task.title|truncatechars:25}}</h5>
-          <p class="card-text" style="font-size:12px;margin-bottom: 3px;">{{task.description|truncatechars:40}}</p>
-          <p class="card-text" style="font-size:10px;"><small class="">{{request.user.profile}} -- {{task.time_stamp | timesince}} ago <a href="{% url 'task:remove_dep' slug=task.slug dep_id=dep.pk %}">   delete</a></small></p>
+          <h5 class="card-title" style="font-size:14px;">{{obj.title|truncatechars:25}}</h5>
+          <p class="card-text" style="font-size:12px;margin-bottom: 3px;">{{obj.description|truncatechars:40}}</p>
+          <p class="card-text" style="font-size:10px;"><small class="">{{obj.user.profile}} -- {{obj.time_stamp | timesince}} ago <a href="{% url 'task:remove_dep' slug=task.slug dep_id=obj.pk %}">delete</a></small></p>
         </div>
       </div>
     </div>

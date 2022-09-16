@@ -27,24 +27,20 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            {% if user.is_admin %}
             <li class="nav-item">
-              <a class="nav-link" href="http://127.0.0.1:8000/admin/">Admin</a>
+              <a class="nav-link" href="http://127.0.0.1:8000/admin/">admin</a>
             </li>
+            {% endif %}
+
             {% if user.is_authenticated %}
+
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'accounts:settings' %}">user settings</a>
+            </li>
             
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                More
-              </a>
-              <ul class="dropdown-menu bg-transparent" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" aria-current="page" 
-                  href="{% url 'task:create_task' %}">Create</a>
-                </li>
-                <li><a class="dropdown-item" href="#">Another action</a></li>
-                <li><hr class="dropdown-divider"></li>
-                
-                <li><a class="dropdown-item" href="{% url 'accounts:settings' %}">user settings</a></li>
-              </ul>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'task:create_task' %}">create</a>
             </li>
             
             <li class="nav-item">
@@ -55,8 +51,8 @@
           {% if request.user.is_authenticated %}
           <form class="d-flex" role="search" method="GET" action="{% url 'task:search' %}">
             {% csrf_token %}
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="q">
-            <button class="btn btn-outline-success" type="search">Search</button>
+            <input class="form-control me-2 border-success border-opacity-25" type="search" placeholder="Search" aria-label="Search" name="q">
+            <button class="btn btn-outline-success border-success border-opacity-25" type="search">Search</button>
           </form>
           <ul class="navbar-nav">
             

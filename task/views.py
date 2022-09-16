@@ -1,9 +1,8 @@
-from django.shortcuts import get_list_or_404
 from django.shortcuts import get_object_or_404, render,redirect
 from django.contrib.auth.decorators import login_required
 from accounts.models import MyUser, Profile
 from .forms import AddCommentForm,TaskCreateForm, TaskUpdateForm
-from .models import Collaborators, Comment, Dependencies, Task
+from .models import Collaborations, Comment, Dependencies, Task
 from django.db.models import Q
 from django.contrib import messages
 # Create your views here.
@@ -13,11 +12,10 @@ def dashboard(request):
     user = request.user
     task_qs = Task.objects.all() or None
     user_qs = Task.objects.filter(user=user) or None
-    # user.profile.online = True
-    # user.profile.save()
-
+    collaborations = Collaborations.objects.filter(users=user)
     template_name = 'task/dashboard.html' 
-    context = {'title':'all tasks','user_qs':user_qs,'task_qs':task_qs}
+    context = {'title':'dashboard','user_qs':user_qs,'task_qs':task_qs,'my_collabs':collaborations,'dashboard':'true'}
+    messages.success(request,'completed tasks have green tag')
     return render(request,template_name,context)
 
 
@@ -88,12 +86,6 @@ def update(request,slug):
     task = get_object_or_404(Task,slug=slug)
     form = TaskUpdateForm(request.POST or None, instance=task)
 
-    dep = get_object_or_404(Dependencies,main_task=task)
-    dep_form = DependenciesForm(request.POST or None, instance=dep)
-    
-    collab = get_object_or_404(Collaborators,primary_task=task)
-    collab_form =CollabForm(request.POST or None, instance=collab) 
-
     qs = MyUser.objects.all()
     
     if request.POST:
@@ -109,7 +101,7 @@ def update(request,slug):
 
     context = {
         'title': f'update-{task.title}', 'task':task, 'update_form':form,
-        'collab_form':collab_form, 'dep_form':dep_form, 'qs':qs
+        'qs':qs
     }
     
     template_name = 'task/update.html' 
@@ -218,10 +210,12 @@ def delete_comment(request,id):
         messages.info(request, "you don't have permission to delete this comment")
     return redirect('task:detail',slug=comment.task.slug)
 
-def remove_collab(request,slug,user_id):
+def remove_collab(request,slug,user_id,dashboard='true'or None):
     user = get_object_or_404(MyUser,id=user_id)
     task = get_object_or_404(Task,slug=slug)
     task.collab.users.remove(user)
+    if dashboard == 'true':
+        return redirect('task:dashboard')
     return redirect('task:detail',slug=slug)
 
 

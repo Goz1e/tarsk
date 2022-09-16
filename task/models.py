@@ -19,7 +19,7 @@ class Task(models.Model):
     edited = models.BooleanField(default=False,blank=True)
 
     class Meta:
-        ordering = ('-deadline','time_stamp')
+        ordering = ('completed','-deadline','time_stamp',)
 
     def __str__(self):
         return self.title
@@ -60,12 +60,13 @@ class Dependencies(models.Model):
         return f'dependencies for {self.main_task}'
     
 
-class Collaborators(models.Model):
+class Collaborations(models.Model):
     primary_task = models.OneToOneField(Task,related_name='collab',on_delete=models.CASCADE)
-    users = models.ManyToManyField(MyUser,related_name='collaborators',)
+    users = models.ManyToManyField(MyUser,related_name='my_collaborations',)
 
     class Meta:
         verbose_name_plural = "collaborators"
 
     def __str__(self) :
         return f'collaborators on  {self.primary_task}'
+

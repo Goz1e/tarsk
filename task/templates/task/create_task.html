@@ -15,12 +15,12 @@
   <div class="flex-row gap-3 justify-content-around">
 
     <div class="row section p-3 rounded gap-3">
-      <div id="imgdiv" class="col-sm-5 text-center p-3 rounded shadow d-none d-sm-block">
+      <div id="imgdiv" class="col-sm-5 text-center p-3 rounded shadow-sm d-none d-sm-block">
             <img class="thumbnail img-responsive align-self-center"  src="{% static '/images/index.svg' %}" 
                 style="max-width:100%;height: auto;max-height: 100%;"> 
      </div>
 
-     <div class="col-sm-6 shadow rounded p-3 sm-w-100">
+     <div class="col-sm-6 shadow-sm rounded p-3 sm-w-100">
         <form method="post" class="form-control-sm w-100 h-50">
           {% csrf_token %}
           {{ create_form | crispy}}

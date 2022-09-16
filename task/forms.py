@@ -1,8 +1,6 @@
 from unicodedata import name
 from django import forms
-from .models import Collaborators, Comment, Dependencies, Task
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit,Layout
+from .models import Comment,Task
 from accounts.models import MyUser
 
 class Date_input(forms.DateInput):
@@ -20,9 +18,9 @@ class TaskCreateForm(forms.ModelForm,):
         fields = ('title','description','deadline')
 
         widgets={
-            "title": forms.TextInput(attrs={}),
-            "description": forms.TextInput(attrs={}),
-            "deadline": Date_input(),
+            "title": forms.TextInput(attrs={"class":'border-success border-opacity-25',}),
+            "description": forms.TextInput(attrs={"class":'border-success border-opacity-25',}),
+            "deadline": Date_input(attrs={"class":'border-success border-opacity-25',}),
         }
 
 class TaskUpdateForm(forms.ModelForm,):
@@ -31,39 +29,23 @@ class TaskUpdateForm(forms.ModelForm,):
         fields = ('title','description','deadline','completed')
 
         widgets={
-            "title": forms.TextInput(attrs={}),
-            "description": forms.TextInput(attrs={}),
-            "deadline": Date_input(),
-            "completed":forms.CheckboxInput()
+            "title": forms.TextInput(attrs={"class":'border-success border-opacity-25',}),
+            "description": forms.TextInput(attrs={"class":'border-success border-opacity-25',}),
+            "deadline": Date_input(attrs={"class":'border-success border-opacity-25',}),
+            "completed":forms.CheckboxInput(attrs={"class":'border-success border-opacity-25',})
         }
 
 class AddCommentForm(forms.ModelForm):
 
+    
     class Meta:
         model = Comment
         fields = ['text']
-
-        widgets={
-            "text": forms.TextInput(attrs={}),
-            }
-
-
-# class DependenciesForm(forms.ModelForm):
-
-#     class Meta:
-#         model = Dependencies
-#         fields = ['dependent_on']
-#         widgets = {
-#             'dependent_on':forms.CheckboxSelectMultiple(attrs={'name':'dep_form'})
-#         }
-
-
-# class CollabForm(forms.ModelForm):
-#     class Meta:
-#         model = Collaborators
-#         fields = ['users']
-#         widgets = {
-#             'users':forms.CheckboxSelectMultiple(attrs={'name':'collab_edit_form'})
-#         }
         
-    
+        widgets={
+            "text": forms.TextInput(attrs={"class":'border-success border-opacity-25',}),
+            
+            }
+        labels = {
+            'text': 'comment',
+        }

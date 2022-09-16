@@ -3,7 +3,7 @@ from pickle import FALSE
 from urllib import request
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
-from task.models import Collaborators, Dependencies, Task
+from task.models import Collaborations, Dependencies, Task
 from django.utils.text import slugify
 import string, random
 
@@ -26,10 +26,10 @@ def slug_creator(sender,instance,new_slug=None,**kwargs):
     
 
 @receiver(post_save,sender=Task)
-def dependency_Collaborators_creator(sender,instance,*args,**kwargs):
+def dependency_Collaborations_creator(sender,instance,*args,**kwargs):
     
     if (hasattr(instance, 'my_dependencies')) == False:
         Dependencies.objects.create(main_task=instance)
     if (hasattr(instance, 'collab')) == False:
-        Collaborators.objects.create(primary_task=instance)
+        Collaborations.objects.create(primary_task=instance)
         

@@ -17,7 +17,7 @@ urlpatterns = [
     path('<slug:slug>/collaborators/', update_collab, name='update_collab'),
     path('<slug:slug>/delete/', delete_task, name='delete'),
     path('<int:id>/delete-comment/', delete_comment, name='delete_comment'),
-    path('<slug:slug>/remove-collab/<str:user_id>', remove_collab, name='remove_collab'),
+    path('<slug:slug>/remove-collab/<str:user_id>/<str:dashboard>/', remove_collab, name='remove_collab'),
     path('<slug:slug>/update-dep/', update_dep, name='update_dep'),
     path('<slug:slug>/remove-dep/<str:dep_id>', remove_dep, name='remove_dep'),
     

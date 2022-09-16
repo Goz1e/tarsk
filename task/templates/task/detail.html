@@ -6,182 +6,59 @@
 
 <br><br>
 
-<div class="card text-center border-0 shadow">
-    <div class="card-header">
-      <ul class=" d-flex nav nav-tabs  card-header-tabs">
+<div class="card text-center border-0 shadow-sm">
+  <div class="card-header">
+    <ul class=" d-flex nav nav-tabs  card-header-tabs">
 
-        <div class="row">
-          <a class=" col nav-link active" aria-current="true" href="#">Active</a>
-          
-          <div class="col">
-            <a href="{% url 'task:update' slug=task.slug %}" class=" col btn btn-outline-primary" tabindex="-1" role="button" aria-disabled="true">update</a>
-          </div>
-          
-          <div class="col ms-auto">
-            <button type="button" class="btn btn-outline-danger position-sticky " tabindex="-1" data-bs-toggle="modal" data-bs-target="#exampleModal">
-              delete
-            </button>
-            
-            <!-- Modal -->
-            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Confirm action!</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <p> Delete {{task.title}}?</p>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-                    <a class="btn btn-primary" href="{% url 'task:delete' slug=task.slug %}" role="button">Confirm</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="row">
+        <a class=" col nav-link active" aria-current="true" href="#">Active</a>
         
-        <p class="nav-item pt-1 mx-auto"tabindex="-1" aria-disabled="true">due date: {{task.deadline}} |  id : {{task.slug}}</p>
-        
-      </ul>
-      
-    </div>
-    <div class="card-body border-0">
-      <h5 class="card-title">{{task.title}}</h5>
-      <p class="card-text">{{task.description}}</p>
-      {% if task.completed %}
-      <a href="{{ task.completed_url }}" class="btn btn-primary disabled ">completed</a>
-      {% else %}
-      <a href="{{ task.completed_url }}" class="btn btn-primary">completed</a>
-      {% endif %}
-    </div>
-</div>
-
-<br>
-
-<div class="card text-center border-0 shadow">
-    <div class="card-header">
-      <ul class="nav nav-tabs card-header-tabs">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="true" href="#">Comments</a>
-        </li>
-
-      </ul>
-    </div>
-    <div class="card-body border-0">
-      
-      {% for comment in comments %}
-      <div class="row  d-flex justify-content-center">
-
         <div class="col">
-
-
-            <div class="card p-3 mt-2 border-0">
-
-                <div class="d-flex justify-content-between align-items-center">
-
-              <div class="user d-flex flex-row align-items-center">
-
-                <img src="https://i.imgur.com/0LKZQYM.jpg" width="30" class="user-img rounded-circle mr-2">
-                <span><small class="font-weight-bold text-primary">{{comment.author.profile.first_name}}</small> <small class="font-weight-bold">{{comment.text}}</small></span>
-                  
-              </div>
-
-              <small>{{comment.time_stamp|timesince}}</small>
-
-              </div>
-
-
-              <div class="action d-flex justify-content-between mt-2 align-items-center">
-
-                <div class="reply px-4">
-                    <a href="{% url 'task:delete_comment' id=comment.id %}"><small>Remove</small></a>
-                    
-                   
-                </div>
-
-                <div class="icons align-items-center">
-                    <i class="fa fa-user-plus text-muted"></i>
-                    <i class="fa fa-star-o text-muted"></i>
-                    <i class="fa fa-check-circle-o check-icon text-primary"></i>
-                    
-                </div>
-                  
-              </div>
-
-
-                
-            </div>
-
+          <a href="{% url 'task:update' slug=task.slug %}" class=" col btn btn-outline-primary border-success border-opacity-25" tabindex="-1" role="button" aria-disabled="true">update</a>
         </div>
         
-    </div>
-      {% endfor %}
-      <br><hr>
-      <form method="post" class="form-control-sm w-100 h-50" action="{{ task.add_comment_url }}">
-        {% csrf_token %}
-        {{ comment_form | crispy}}
-        <button class="btn btn-outline-primary btn-sm" type="submit">submit</button>
-      </form>
-      
-    </div>
-</div>
-
-<br>
-
-<div class="card text-center shadow border-0">
-    <div class="card-header">
-      <ul class="nav nav-tabs card-header-tabs  gap-2">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="true" href="#">Collabortors</a>
-        </li>
-        
-        <li class="nav-item">
-          <form class="d-flex" method="post" action="{% url 'task:update_collab' slug=task.slug %}">
-            {% csrf_token %}
-            <input class="form-control me-2" list="qs" placeholder="Add collaborator" name="collab_add_form">
-            <button class="btn btn-outline-primary" >submit</button>
-            <datalist id="qs">
-              {% for user in qs%}
-              <option value="{{user.profile.first_name}}"></option>
-              {% endfor %}
-            </datalist>
-          </form>
-        </li>
-      </ul>
-    </div>
-    <div class="card-body">
-      <div class="d-flex justify-content-around flex-wrap mb-3 gap-3">
-        
-        {% for user in collabs %}
-        <div class="col-md-4 w-25">
-          <div class="card p-3 mb-2">
-              <div class="d-flex justify-content-between">
-                  <div class="d-flex flex-row align-items-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M11.315 10.014a.5.5 0 0 1 .548.736A4.498 4.498 0 0 1 7.965 13a4.498 4.498 0 0 1-3.898-2.25.5.5 0 0 1 .548-.736h.005l.017.005.067.015.252.055c.215.046.515.108.857.169.693.124 1.522.242 2.152.242.63 0 1.46-.118 2.152-.242a26.58 26.58 0 0 0 1.109-.224l.067-.015.017-.004.005-.002zM4.756 4.566c.763-1.424 4.02-.12.952 3.434-4.496-1.596-2.35-4.298-.952-3.434zm6.488 0c1.398-.864 3.544 1.838-.952 3.434-3.067-3.554.19-4.858.952-3.434z"/></svg>
-                      <div class="ms-2 c-details">
-                          <h6 class="mb-0">{{user.profile.first_name}}</h6>
-                      </div>
-                  </div>
-                  <div class=" badge "><a href="{% url 'task:remove_collab' slug=task.slug user_id=user.pk %}"><span>remove</span></a></div>
-              </div>
+        <div class="col ms-auto">
+          <button type="button" class="btn btn-outline-danger position-sticky border-success border-opacity-25" tabindex="-1" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            delete
+          </button>
           
+          <!-- Modal -->
+          <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Confirm action!</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <p> Delete {{task.title}}?</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                  <a class="btn btn-primary" href="{% url 'task:delete' slug=task.slug %}" role="button">Confirm</a>
+                </div>
+              </div>
+            </div>
           </div>
-      </div>
-        {% endfor %}
-        
-        
-        
+        </div>
       </div>
       
-    </div>
-</div>
+      <p class="nav-item pt-1 mx-auto"tabindex="-1" aria-disabled="true">due date: {{task.deadline}} |  id : {{task.slug}}</p>
+      
+    </ul>
+    
+  </div>
+  <div class="card-body border-0">
+    <h5 class="card-title">{{task.title}}</h5>
+    <p class="card-text">{{task.description}}</p>
+    {% if task.completed %}
+    <a href="{{ task.completed_url }}" class="btn btn-primary disabled ">completed</a>
+    {% else %}
+    <a href="{{ task.completed_url }}" class="btn btn-primary">completed</a>
+    {% endif %}
+  </div>
 
-<br>
-
-<div class="card text-center shadow border-0">
+  <!-- DEPENDENCIES -->
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs  gap-2">
       <li class="nav-item">
@@ -191,8 +68,8 @@
       <li class="nav-item">
         <form class="d-flex" method="post" action="{% url 'task:update_dep' slug=task.slug %}">
           {% csrf_token %}
-          <input class="form-control me-2" list="dep_qs" placeholder="add dependency" name="dep_form">
-          <button class="btn btn-outline-primary" >submit</button>
+          <input class="form-control me-2 border-success border-opacity-25" list="dep_qs" placeholder="add dependency" name="dep_form">
+          <button class="btn btn-outline-primary border-success border-opacity-25" >submit</button>
           <datalist id="dep_qs">
             {% for dep in dep_qs%}
             <option value="{{dep}}"></option>
@@ -202,18 +79,133 @@
       </li>
     </ul>
   </div>
+  <br>
   <div class="card-body">
     <div class="d-flex justify-content-around flex-wrap mb-3 gap-3">
       
       {% for dep in task_dep %}
-      {% include "task/card_template2.html" with task=dep %}
+      {% include "task/card_template2.html" with obj=dep %}
       {% endfor %}
       
       
     </div>
     
   </div>
+  <!-- DEPENDENCIES END -->
+
+  <!-- COLLABORATORS -->
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs  gap-2">
+      <li class="nav-item">
+        <a class="nav-link active" aria-current="true" href="#">Collabortors</a>
+      </li>
+      
+      <li class="nav-item">
+        <form class="d-flex" method="post" action="{% url 'task:update_collab' slug=task.slug %}">
+          {% csrf_token %}
+          <input class="form-control me-2 border-success border-opacity-25" list="qs" placeholder="Add collaborator" name="collab_add_form">
+          <button class="btn btn-outline-primary border-success border-opacity-25" >submit</button>
+          <datalist id="qs">
+            {% for user in qs%}
+            <option value="{{user.profile.first_name}}"></option>
+            {% endfor %}
+          </datalist>
+        </form>
+      </li>
+    </ul>
+  </div>
+  <div class="card-body">
+    <br>
+    <div class="d-flex justify-content-around flex-wrap mb-3 gap-3">
+      
+      {% for user in collabs %}
+      <div class="col-md-4 w-25">
+        <div class="card p-3 mb-2 shadow-sm border-0" style="background-color:rgb(238, 237, 237) ;">
+            <div class="d-flex justify-content-between">
+                <div class="d-flex flex-row align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M11.315 10.014a.5.5 0 0 1 .548.736A4.498 4.498 0 0 1 7.965 13a4.498 4.498 0 0 1-3.898-2.25.5.5 0 0 1 .548-.736h.005l.017.005.067.015.252.055c.215.046.515.108.857.169.693.124 1.522.242 2.152.242.63 0 1.46-.118 2.152-.242a26.58 26.58 0 0 0 1.109-.224l.067-.015.017-.004.005-.002zM4.756 4.566c.763-1.424 4.02-.12.952 3.434-4.496-1.596-2.35-4.298-.952-3.434zm6.488 0c1.398-.864 3.544 1.838-.952 3.434-3.067-3.554.19-4.858.952-3.434z"/></svg>
+                    <div class="ms-2 c-details">
+                        <h6 class="mb-0">{{user.profile.first_name}}</h6>
+                    </div>
+                </div>
+                <div class=" badge "><a href="{% url 'task:remove_collab' slug=task.slug user_id=user.pk dashboard=task.slug %}"><span>remove</span></a></div>
+            </div>
+        
+        </div>
+    </div>
+      {% endfor %}
+      
+      
+      
+    </div>
+    
+  </div>
+  <!-- COLLABORATORS END -->
+
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item">
+        <a class="nav-link active" aria-current="true" href="#">Comments</a>
+      </li>
+  
+    </ul>
+  </div>
+  <div class="card-body border-0">
+    
+    {% for comment in comments %}
+    <div class="row  d-flex justify-content-center">
+  
+      <div class="col">
+  
+  
+          <div class="card p-3 mt-2 border-0" style="background-color:rgb(238, 237, 237) ;">
+  
+            <div class="d-flex justify-content-between align-items-center">
+  
+              <div class="user d-flex flex-row align-items-center">
+  
+                <img src="https://i.imgur.com/0LKZQYM.jpg" width="30" class="user-img rounded-circle mr-2">
+                <span><small class="font-weight-bold text-primary">{{comment.author.profile.first_name}}</small> <small class="font-weight-bold">{{comment.text}}</small></span>
+                  
+              </div>
+  
+              <small>::{{comment.time_stamp|timesince}} | <a href="{% url 'task:delete_comment' id=comment.id %}"><small>delete</small></a></small>
+  
+            </div>
+  
+          </div>
+  
+      </div>
+      
+  </div>
+    {% endfor %}
+    <br>
+    <form method="post" class="form-control-sm w-100 h-50" action="{{ task.add_comment_url }}">
+      {% csrf_token %}
+      {{ comment_form | crispy}}
+      <button class="btn btn-outline-primary border-success border-opacity-25 btn-sm" type="submit">submit</button>
+    </form>
+    
+  </div>
+  
 </div>
+
+
+  
+
+
+
+<br>
+
+<div class="card text-center shadow border-0">
+    
+</div>
+
+<br>
+
+<!-- <div class="card text-center shadow border-0">
+  
+</div> -->
 
 <br><br>
 

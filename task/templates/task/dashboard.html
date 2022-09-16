@@ -4,10 +4,7 @@
 {% load static %}
 <br>
 
-  <div class="d-flex justify-content-center">
-    <p class="fw-light">dashboard - {{request.user.email}}</p>
-  </div>
-
+  
   {% if user_qs == None %}
   
   <div class="row  pt-3 pb-4  shadow rounded">
@@ -23,12 +20,63 @@
 
   {% else %}
 
+  <!-- display user created tasks -->
+  <div class="d-flex justify-content-center">
+    <p class="fw-light">My tasks</p>
+  </div>
+
   <div class="d-flex justify-content-around flex-wrap mb-3">
+    
     {% for task in user_qs %}
     
       {% include "task/card_template.html" with task=task %}
       
     {% endfor %}
+  </div>
+
+ <br><hr>
+
+ <!-- display user collaborations -->
+ <div class="d-flex justify-content-center">
+  <p class="fw-light">My collaborations</p>
+</div>
+
+  <div class="d-flex justify-content-around flex-wrap mb-3">
+    
+    {% for col in my_collabs %}
+    
+    <div class="card mb-3 shadow-sm border-0" style="max-width: 250px; max-height: 200px; --bs-card-spacer-y: 9px;background-color:rgb(238, 237, 237) ;">
+      <div class="row g-0 h-100" >
+        <div id='img-div' class="col-md-4 rounded-start" style="width:10%; height: auto; background-color: brown;">
+          <a href="{{ col.primary_task.get_absolute_url }}">
+            {% if col.primary_task.completed %}
+          <img  id= 'side-img' src="https://media.istockphoto.com/photos/green-textured-cardboard-background-picture-id1353173739?b=1&k=20&m=1353173739&s=170667a&w=0&h=qgD73m2bobSXB2EYZ4cqmjn2uq3q30LGrEw4W4V3BpI=" 
+          class="img-fluid rounded-start" />
+          {% else %}
+          <img  id= 'side-img' src="https://media.istockphoto.com/photos/blue-cotton-fabric-cloth-texture-for-background-natural-textile-picture-id1354827017?k=20&m=1354827017&s=612x612&w=0&h=P0Tk6B0c7usp4XfvSQj7eJwtMQN-8LcHL31Jt1KZjY4=" 
+          class="img-fluid rounded-start" />
+          {% endif %}
+          </a>
+        </div>
+        <div class="col-md-8"  style="width:90%;">
+          <div class="card-body mx-auto">
+            <h5 class="card-title" style="font-size:14px;">{{col.primary_task.title|truncatechars:25}}</h5>
+            <p class="card-text" style="font-size:12px;margin-bottom: 3px;">{{col.primary_task.description|truncatechars:40}}</p>
+            <p class="card-text" style="font-size:10px;"><small class="">{{col.primary_task.user.profile}} -- {{col.primary_task.time_stamp | timesince}} ago <a href="{% url 'task:remove_collab' slug=col.primary_task.slug user_id=user.pk dashboard=dashboard %}">remove</a></small></p>
+          </div>
+        </div>
+      </div>
+    </div>  
+    
+      
+    <style>
+    #img-div img {
+      height:100%;
+      object-fit: cover;
+    }
+    </style>
+    {% endfor %}
+  
   </div>
 
   {% endif %}

@@ -1,9 +1,7 @@
 
 body{
-	background-image: url('/static/images/background2.jpg');
+	background-color:rgb(255, 253, 250);
 	background-size: cover;
-	height: 100vh;
-	background-attachment: fixed;
 }
 
 .card,.form-control{
@@ -17,3 +15,8 @@ body{
 	border-bottom-color:transparent;
 
 }
+
+.border{
+	--bs-border-opacity: 1;
+	border-color: rgba(var(--bs-success-rgb), var(--)) !important;
+  }

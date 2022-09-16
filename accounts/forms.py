@@ -18,7 +18,7 @@ class UserCreationForm(forms.ModelForm):
         fields = ('email', 'phone_number', 'date_of_birth')
 
         widgets={
-            "date_of_birth": Date_input(),
+            "date_of_birth": Date_input(attrs={"class":'border-success border-opacity-25',}),
         }
 
     def clean_password2(self):
@@ -64,8 +64,8 @@ class LoginForm(forms.ModelForm):
         fields = ('email','password')
 
         widgets={
-            "email": forms.EmailInput(),
-            "password":forms.PasswordInput(),
+            "email": forms.EmailInput(attrs={"class":'border-success border-opacity-25',}),
+            "password":forms.PasswordInput(attrs={"class":'border-success border-opacity-25',}),
         }
 
     def clean(self):
