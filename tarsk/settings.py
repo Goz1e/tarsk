@@ -179,3 +179,5 @@ ACCOUNT_SIGNUP_REDIRECT_URL = "accounts:edit_profile"
 
 # client id : 757415548899-401oj9ja4dsk3gdm9iggei9d4d6e8q37.apps.googleusercontent.com
 # client secret : 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
+
+django_on_heroku.settings(locals())
