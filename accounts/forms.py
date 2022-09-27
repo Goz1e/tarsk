@@ -7,6 +7,7 @@ from accounts.models import MyUser, Profile
 class Date_input(forms.DateInput):
     input_type= 'date'
 
+     
 class UserCreationForm(forms.ModelForm):
     """A form for creating new users. Includes all the required
     fields, plus a repeated password."""
@@ -15,11 +16,9 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = MyUser
-        fields = ('email', 'phone_number', 'date_of_birth')
+        fields = ('email',)
 
-        widgets={
-            "date_of_birth": Date_input(attrs={"class":'border-success border-opacity-25',}),
-        }
+        
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -47,14 +46,18 @@ class UserChangeForm(forms.ModelForm):
 
     class Meta:
         model = MyUser
-        fields = ('email', 'password', 'date_of_birth', 'phone_number', 'is_active', 'is_admin')
+        fields = ('email', 'password', 'is_active', 'is_admin')
 
 
 
 class ProfileEditForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ('first_name', 'last_name',)
+        fields = ('first_name', 'last_name','phone_number', 'date_of_birth')
+        widgets={
+            "date_of_birth": Date_input(attrs={"class":'border-success border-opacity-25',}),
+        }
+
         
 
 class LoginForm(forms.ModelForm):
@@ -62,7 +65,6 @@ class LoginForm(forms.ModelForm):
     class Meta:
         model = MyUser
         fields = ('email','password')
-
         widgets={
             "email": forms.EmailInput(attrs={"class":'border-success border-opacity-25',}),
             "password":forms.PasswordInput(attrs={"class":'border-success border-opacity-25',}),
@@ -75,4 +77,3 @@ class LoginForm(forms.ModelForm):
 
             if not authenticate(email=email,password=password):
                 raise forms.ValidationError('invalid credentials')
-

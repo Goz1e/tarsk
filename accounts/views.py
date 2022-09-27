@@ -25,15 +25,15 @@ def signup(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.save()
-            login(request, user)
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             print(f'created user: {user} \n current user: {request.user}')
-            return redirect('accounts:login')
+            return redirect('accounts:edit_profile')
     else:
         form = UserCreationForm()
     return render(request, 'accounts/signup.html', {'signup_form': form,'title':'dashboard'})
 
 
-def login_view(request):
+def login_view(request,backend = 'django.contrib.auth.backends.ModelBackend'):
     form = LoginForm()
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -52,6 +52,7 @@ def login_view(request):
                     return redirect('accounts:edit_profile')
                 if 'user_settings' in request.POST:
                     return redirect('accounts:settings')
+                return redirect ('task:dashboard')
                 
             else:
                 messages.info(request, "login failed!")
@@ -72,9 +73,7 @@ def edit_profile(request):
             profile = form
             profile.save()
             messages.info(request, "profile information updated")
-            if from_signup:
-                return redirect('task:dashboard')
-            return redirect('accounts:settings')
+            return redirect('task:dashboard')
             
         else:
             messages.info(request, "please check provided information")

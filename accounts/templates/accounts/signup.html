@@ -2,6 +2,8 @@
 {% load crispy_forms_tags %}
 {% block content %}
 {% load static %}
+{% load account socialaccount %}
+
 
 
 
@@ -9,8 +11,13 @@
   <p class="fw-light">signup</p>
 </div>
 
+{% if redirect_field_value %}
+<input type="hidden" name="{{ redirect_field_name }}" value="{{ 'accounts:edit_profile' }}" />
+{% endif %}
+
   <div class="flex-row gap-3 justify-content-around">
 
+    
     <div class="row  pt-3">
       <div id="imgdiv" class="col-sm-5 text-center">
             <img class="thumbnail img-responsive"  src="{% static '/images/index.svg' %}" 
@@ -21,12 +28,18 @@
 
      </div>
 
-     <div class="col-sm-4 shadow rounded ">
+     <div class="col-sm-4 shadow rounded">
+      <div class=" pb-2">
         <form method="post" class="form-control-sm">
           {% csrf_token %}
           {{ signup_form|crispy }}
           <button class="btn btn-outline-primary btn-sm" type="submit">signup</button>
         </form>
+
+        <div class=" d-flex bg-primary justify-content-center border shadow-sm rounded text-light p-1 gap-1">
+          <a href="{% provider_login_url 'google' next='accounts:edit_profile' %}" class="text-decoration-none text-light">continue with google</a>
+        </div>
+      </div>
       </div>
     </div>
 
