@@ -2,11 +2,19 @@
 {% load crispy_forms_tags %}
 {% block content %}
 {% load static %}
+{% load i18n %}
+{% load account socialaccount %}
+{% get_providers as socialaccount_providers %}
+
+{% load crispy_forms_filters %}
+
   <br>
 
   <div class="d-flex justify-content-center">
     <p class="fw-light">login</p>
+    
   </div>
+
   
   <div class="flex-row gap-3 justify-content-around">
 
@@ -14,6 +22,7 @@
       <div id="imgdiv" class="col-sm-5 text-center">
             <img class="thumbnail img-responsive"  src="{% static '/images/index.svg' %}" 
                 style="max-width:100%;height: auto;max-height: 100%;"> 
+          
      </div>
 
      <div class="col-sm-1">
@@ -30,9 +39,15 @@
           {% csrf_token %}
           {{ form|crispy }}
           <button class="btn btn-primary btn-sm" type="submit">login</button>
-        </form>
+
+          <div class=" d-flex bg-primary justify-content-center border shadow-sm rounded text-light p-1 gap-1">
+            <a href="{% provider_login_url 'google' %}" class="text-decoration-none text-light">continue with google</a>
+          </div>
+        </form>  
       </div>
+      
     </div>
+
 
   </div>
   

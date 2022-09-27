@@ -22,8 +22,8 @@ urlpatterns = [
     #the index view points to a separate account app
     path('', index, name='index'), # new
     path('admin/', admin.site.urls),
-    
     path('accounts/', include('accounts.urls')),
+    path('accounts/', include('allauth.urls')),
     path("accounts/", include("django.contrib.auth.urls")),
     path('task/', include('task.urls')),
  ]

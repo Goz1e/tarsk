@@ -1,3 +1,6 @@
+from contextlib import nullcontext
+from pickle import TRUE
+from unittest.util import _MAX_LENGTH
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth.models import (
@@ -6,39 +9,29 @@ from django.contrib.auth.models import (
 
 
 class MyUserManager(BaseUserManager):
-    def create_user(self, email, phone_number, date_of_birth, password=None):
+    def create_user(self, email,password=None):
         """
-        Creates and saves a User with the given email, phone number, date of
-        birth and password.
+        Creates and saves a User with the given email and password.
         """
         if not email:
             raise ValueError('Users must have an email address')
-        if not phone_number:
-            raise ValueError('Users must have a phone number')
-        if not date_of_birth:
-            raise ValueError('Users must have a date of birth')
-
         user = self.model(
             email=self.normalize_email(email),
-            phone_number=phone_number,
-            date_of_birth=date_of_birth,
-        )
+            )
 
         user.is_active = True
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, phone_number, date_of_birth, password=None):
+    def create_superuser(self, email, password=None):
         """
         Creates and saves a superuser with the given email, date of
         birth and password.
         """
         user = self.create_user(
             email,
-            phone_number=phone_number,
             password=password,
-            date_of_birth=date_of_birth,
         )
         user.is_active = True
         user.is_admin = True
@@ -52,15 +45,12 @@ class MyUser(AbstractBaseUser):
         max_length=255,
         unique=True,
     )
-    phone_number = PhoneNumberField()
-    date_of_birth = models.DateField()
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 
     objects = MyUserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['date_of_birth','phone_number']
 
     def __str__(self):
         return self.email
@@ -85,6 +75,8 @@ class Profile(models.Model):
     user = models.OneToOneField(MyUser, related_name='profile', on_delete=models.CASCADE)
     first_name = models.CharField(max_length=200,null=True,blank=False)
     last_name = models.CharField(max_length=200,null=True)
+    date_of_birth = models.DateField(blank=False,null=True)
+    phone_number = PhoneNumberField(null=True,blank=True)
     online = models.BooleanField(default=False,blank=True)
 
     def __str__(self):
