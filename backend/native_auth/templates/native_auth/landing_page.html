@@ -1,0 +1,40 @@
+{% extends 'native_auth/base.html' %}
+{% load static %}
+{% load account socialaccount %}
+{% get_providers as socialaccount_providers %}
+{% block content %}
+
+ <section>
+    <br>
+  
+
+    <div class="container" style="height: 100vh;" >
+      <br><br>
+      <div class="d-flex justify-content-center">
+        <p class="fw-light">focus on what's most important</p>
+      </div>
+
+      <div class="row  pt-3 pb-4 border rounded">
+        <div id="imgdiv" class="col-sm-5 text-center">
+              <img class="thumbnail img-responsive"  src="{% static 'images/landing_page.svg' %}" 
+                  style="max-width:100%;height: auto;max-height: 100%;"> 
+       </div>
+        <div class="col-sm-5 text-center">
+          <p><h2 class="">“Whether you think you can, or you think you cant; you are right.”</h2></p>
+          <p class="text-small text-muted">-Henry Ford</p>
+        </div>
+      </div>
+      <br>
+
+      <div class="d-flex justify-content-center">
+        <p class="fw-light">let's get you started</p>
+      </div>
+
+      <div class="d-flex justify-content-center gap-2">
+        <a class="btn btn-primary btn-sm" href="{% url 'native_auth:login' %}" role="button">login</a>
+        <a class="btn btn-outline-primary btn-sm" href="{% url 'native_auth:signup' %}" role="button">signup</a>
+      </div>
+    </div>
+  </section>
+  
+{% endblock %}

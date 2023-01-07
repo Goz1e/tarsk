@@ -1,0 +1,159 @@
+{% extends "native_auth/base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+
+<div class="content">
+    <div class="container">
+        <br>
+        <div class="row">
+            <div class="col-lg-8 rounded shadow-sm border">
+                <div class="card-box task-detail">
+                    <div class="media mt-0 m-b-30"><img class="d-flex mr-3 rounded-circle" alt="64x64" src="https://bootdey.com/img/Content/avatar/avatar2.png" style="width: 48px; height: 48px;">
+                        <div class="media-body">
+                            <h6 class="media-heading mb-0 mt-0">{{task.user.profile}}</h6><span class="badge badge-danger">{%if task.late%}Late{%else%}Active{%endif%}</span></div>
+                    </div>
+                    <h6 class="m-b-20">{{task.title}}</h6>
+                    {% if task.description %}
+                    <p class="text-muted">{{task.description}}</p>
+                    {% else %}
+                    <p class="text-muted">task description will be displayed here when available</p>
+                    {% endif %}
+                    <ul class="list-inline task-dates m-b-0 mt-5">
+                        <li>
+                            <h6 class="m-b-5">Start Date</h6>
+                            <p>{{task.time_stamp}}<small class="text-muted"></small></p>
+                        </li>
+                        <li>
+                            <h6 class="m-b-5">Due Date</h6>
+                            <p>{{task.deadline}}<small class="text-muted"></small></p>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                    <div class="task-tags mt-4">
+                        <h6 class="">Dependencies</h6>
+                        
+                        <div class="bootstrap-tagsinput">
+                            {% for dep in task_dep %}
+                            <span class="tag label label-info">
+                                <a href="{{ dep.get_absolute_url }}">{{dep.title}}</a><span data-role="remove"> 
+                                <a href="{% url 'task:remove_dep' slug=task.slug dep_id=dep.pk %}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-x-octagon" viewBox="0 0 16 16">
+                                        <path d="M4.54.146A.5.5 0 0 1 4.893 0h6.214a.5.5 0 0 1 .353.146l4.394 4.394a.5.5 0 0 1 .146.353v6.214a.5.5 0 0 1-.146.353l-4.394 4.394a.5.5 0 0 1-.353.146H4.893a.5.5 0 0 1-.353-.146L.146 11.46A.5.5 0 0 1 0 11.107V4.893a.5.5 0 0 1 .146-.353L4.54.146zM5.1 1 1 5.1v5.8L5.1 15h5.8l4.1-4.1V5.1L10.9 1H5.1z"/>
+                                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                                      </svg>
+                                </a>
+                            </span></span>
+                            {% endfor %}
+                        </div>
+                        {% if no_dep %}
+                        <p class="text-muted"> add dependencies</p>
+                        {% endif %}
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="assign-team mt-4">
+                        <h6 class="m-b-5">Collaborators</h6>
+                        
+                        <div class="bootstrap-tagsinput">
+                            {% for user in collabs %}
+                            
+                            <span class="tag label label-info">{{user.profile.first_name}}<span data-role="remove"> 
+                                <a href="{% url 'task:remove_collab' slug=task.slug user_id=user.pk dashboard=task.slug %}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-x-octagon" viewBox="0 0 16 16">
+                                        <path d="M4.54.146A.5.5 0 0 1 4.893 0h6.214a.5.5 0 0 1 .353.146l4.394 4.394a.5.5 0 0 1 .146.353v6.214a.5.5 0 0 1-.146.353l-4.394 4.394a.5.5 0 0 1-.353.146H4.893a.5.5 0 0 1-.353-.146L.146 11.46A.5.5 0 0 1 0 11.107V4.893a.5.5 0 0 1 .146-.353L4.54.146zM5.1 1 1 5.1v5.8L5.1 15h5.8l4.1-4.1V5.1L10.9 1H5.1z"/>
+                                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                                      </svg>
+                                </a>
+                            </span></span>                     
+                            {% endfor%}
+                            {% if no_collab %}
+                            <p class="text-muted"> add collaborators</p>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="attached-files mt-4">
+                        <h6 class="">Add dependencies and collaborators</h6>
+                        <div class="files-list">
+                            
+                            <div class="d-flex flex-wrap gap-2 justify-content-around">
+
+                                <form class="d-flex" method="post" action="{% url 'task:update_dep' slug=task.slug %}">
+                                    {% csrf_token %}
+                                    <input class="form-control me-2 border-success border-opacity-25" list="dep_qs" placeholder="add dependency" name="dep_form">
+                                    <button class="btn btn-sm btn-outline-primary border-success border-opacity-25" >submit</button>
+                                    <datalist id="dep_qs">
+                                      {% for dep in dep_qs%}
+                                      <option value="{{dep}}"></option>
+                                      {% endfor %}
+                                    </datalist>
+                                  </form>
+                                <form class="d-flex" method="post" action="{% url 'task:update_collabs' slug=task.slug %}">
+                                    {% csrf_token %}
+                                    <input class="form-control me-2 border-success border-opacity-25" list="qs" placeholder="Add collaborator" name="collab_add_form">
+                                    <button class="btn btn-sm btn-outline-primary border-success border-opacity-25" >submit</button>
+                                    <datalist id="qs">
+                                      {% for user in qs%}
+                                      <option value="{{user.profile.first_name}}"></option>
+                                      {% endfor %}
+                                    </datalist>
+                                </form>
+                            </div>
+                           
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="text-right mt-4">
+                                    <a class="btn btn-primary btn-sm" href="{% url 'task:update' slug=task.slug %}" role="button">Edit</a>
+                                    <a class="btn btn-outline-secondary btn-sm" href="{% url 'task:delete' slug=task.slug %}" role="button">Delete</a>
+                                    {% if task.completed %}
+                                    <a href="{{ task.completed_url }}" class="btn btn-primary disabled btn-sm ">completed</a>
+                                    {% else %}
+                                    <a href="{{ task.completed_url }}" class="btn btn-outline-primary btn-sm">mark as complete</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+
+                </div>
+            </div>
+            <!-- end col -->
+            <div class="col-lg-4 rounded shadow-sm">
+                <div class="card-box">
+                    <h4 class="header-title m-b-30">Comments</h4>
+                    <div class="clearfix"></div>
+                    <div>
+                        <div class="media m-b-20">
+                            {% for comment in comments %}
+                            <div class="d-flex mr-3">
+                                <a href="#"><img class="media-object rounded-circle thumb-sm" alt="64x64" src="https://bootdey.com/img/Content/avatar/avatar1.png"></a>
+                            </div>
+                            <div class="media-body">
+                                <h6 class="mt-0">{{comment.author.profile.first_name}}</h6>
+                                <p class="font-13 text-muted mb-0">{{comment.text}}</p><a href="{% url 'task:delete_comment' id=comment.id %}" class="text-success font-13">delete</a>
+                            </div>
+                            {% endfor %}
+                            <form method="post" class="form-control-sm w-100 h-50" action="{{ task.add_comment_url }}">
+                                {% csrf_token %}
+                                {{ comment_form | crispy}}
+                                <button class="btn btn-outline-primary border-success border-opacity-25 btn-sm" type="submit">submit</button>
+                            </form>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- container -->
+</div>
+
+{% endblock %}

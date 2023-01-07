@@ -1,0 +1,25 @@
+
+<div class="card card-x mb-3 shadow-sm border-0">
+    <div class="row g-0 h-100" >
+      <div id='img-div' class="col-md-4">
+        <a href="{{ dep.get_absolute_url }}">
+          {% if dep.late %}
+          <img class="img-fluid" src="https://media.istockphoto.com/id/483752419/photo/leather-background.jpg?b=1&s=170667a&w=0&k=20&c=4U4XJQZ-Wf5Y60-zggsrqNxJ_ucbOuGBcSibDhe4aSo=" 
+          class="img-fluid rounded-start" />
+          {% else %}
+          <img class="img-fluid" src="https://media.istockphoto.com/photos/green-textured-cardboard-background-picture-id1353173739?b=1&k=20&m=1353173739&s=170667a&w=0&h=qgD73m2bobSXB2EYZ4cqmjn2uq3q30LGrEw4W4V3BpI=" 
+          class="img-fluid rounded-start" />
+          {% endif %}
+        </a>
+      </div>
+  
+      <div class="col-md-8"  style="width:90%;">
+        <div class="card-body mx-auto">
+          <h5 class="card-title" style="font-size:14px;">{{obj.title|truncatechars:25}}</h5>
+          <p class="card-text" style="font-size:12px;margin-bottom: 3px;">{{obj.description|truncatechars:40}}</p>
+          <p class="card-text" style="font-size:10px;"><small class="">{{obj.user.profile}} -- {{obj.deadline}} ago <a href="{% url 'task:remove_dep' slug=task.slug dep_id=obj.pk %}">delete</a></small></p>
+        </div>
+      </div>
+    </div>
+  </div>  
+  

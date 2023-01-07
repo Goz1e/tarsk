@@ -1,0 +1,40 @@
+{% extends 'native_auth/base.html' %}
+{% load static %}
+{% block content %}
+<div class="clearfix"></div>
+
+<div class="section">
+  <div class="container">
+    <br><br>
+    <div class="d-flex justify-content-center">
+      {% if query == '' %}
+        <p>Your search is null</p>
+      {% else %}
+        <p class="fw-strong">results on {{query}}</p>
+      {% endif %}
+    </div>
+      
+    <div class="row justify-content-around">
+      {% if no_qs %}
+      <div class="d-flex justify-content-center">
+          <p class="fw-strong">Not found</p>
+      </div>
+
+      <div id="imgdiv" class="col-sm-4 text-center shadow-sm">
+            <img class="thumbnail img-responsive align-self-center"  src="{% static '/images/empty.svg' %}" 
+                style="max-width:100%;height: auto;max-height: 100%;"> 
+      </div>
+
+      {% else %}
+        {% for task in search_qs %}
+        {% include "task/card_template.html" with task=task %}
+        {% endfor %}
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+
+
+{% endblock %}

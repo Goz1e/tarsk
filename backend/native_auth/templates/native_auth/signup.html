@@ -1,0 +1,89 @@
+{% extends "native_auth/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+{% load static %}
+{% load crispy_forms_filters %}
+{% load account socialaccount %}
+{% get_providers as socialaccount_providers %}
+<section>
+  <br><br>
+
+  {% if redirect_field_value %}
+  <input type="hidden" name="{{ redirect_field_name }}" value="{{ 'native_auth:edit_profile' }}" />
+  {% endif %}
+
+  <div class="d-flex justify-content-center">
+    <p class="">Signup</p>
+    
+  </div>
+
+
+  <div class="flex-row login-div justify-content-around rounded p-3  border border-primary rounded">
+
+    <div class="row  pt-3 pb-0">
+      <div id="imgdiv" class="col-sm-5 text-center">
+        <img class=" image img-responsive"  src="{% static 'images/login.svg' %}"> 
+      </div>
+
+     <div class="col-sm-1">
+     </div>
+
+     <div class="col-sm-4 pt-3">
+        {% for message in messages %}
+          <div class="alert alert-danger" role="alert">
+              {{message}}
+          </div>
+        {% endfor %}
+        <form method="post" action="{% url 'native_auth:signup' %}">
+          {% csrf_token %}
+          {{ signup_form|crispy }}
+          <button class="btn btn-primary btn-sm" type="submit">signup</button>
+
+          <div class=" d-flex bg-primary justify-content-center border rounded text-light p-1 mt-2 gap-1">
+            <a href="{% provider_login_url 'google' %}" class="text-decoration-none text-light">continue with google</a>
+          </div>
+        </form>  
+      </div>
+      
+    </div>
+
+  </div>
+  
+</section>
+
+
+<!-- 
+  <br>
+
+  <div class="d-flex justify-content-center pt-3">
+    <h2 class="text-center fw-normal">signup on tarsk</h2>
+  </div>
+
+  
+  <div class="d-flex justify-content-center">
+    <div class="col-sm-4  rounded-0 mt-5">
+        {% for message in messages %}
+            <div class="alert alert-danger" role="alert">
+                {{message}}
+            </div>
+        {% endfor %}
+        <form method="post" action="{% url 'native_auth:signup' %}">
+            {% csrf_token %}
+            {{ signup_form|crispy }}
+            <div class="d-flex justify-content-between">
+                <button class="btn color1 rounded-0 w-100" type="submit">submit..</button>
+            </div>
+        </form>
+        <a class="btn color2 rounded-0 w-100 mt-2" role="button" 
+         href="{% provider_login_url 'google' %}">
+         continue with google
+         </a>  
+    </div>
+  </div> -->
+
+  <!-- 
+  
+-->
+  <!--  -->
+  
+{% endblock %}
