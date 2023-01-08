@@ -10,12 +10,15 @@ from django.contrib import messages
 @login_required(login_url='native_auth:landing_page')
 def dashboard(request):
     user = request.user
+    user_tasks = Task.objects.user_tasks(user=user)
     active_tasks = Task.objects.active_tasks(user) or None
     completed_tasks = Task.objects.completed_tasks(user) or None
-    collaborations = Collaborations.objects.filter(users=user)
+    user_collabs = user.collabs.all()
+    collaborations = (active_tasks|user_collabs).distinct().exclude(user=user)
+    print(collaborations)
     template_name = 'task/dashboard.html' 
     context = {'title':'dashboard','active_tasks':active_tasks,
-    'completed_tasks':completed_tasks,'user_collabs':collaborations,'dashboard':'true'}
+    'completed_tasks':completed_tasks,'collaborations':collaborations,'dashboard':'true'}
     return render(request,template_name,context)
 
 
@@ -50,7 +53,7 @@ def detail(request,slug):
 
     qs = MyUser.objects.all()
 
-    task_collabs = task.collabs.users.all()
+    task_collabs = task.collaborators.all().exclude(pk=task.user.pk)
     dep_qs = Task.objects.filter(slug=task.slug)
     task_dep = task.my_dependencies.dependent_on.all()
     
@@ -126,25 +129,25 @@ def update_collab(request,slug):
     
     if request.POST:
         task = get_object_or_404(Task,slug=slug)
-        collab = task.collabs
+        collab = task.collaborators
         if 'collab_add_form' in request.POST:
             collab_add = request.POST.get('collab_add_form')
             try:
                 profile = get_object_or_404(Profile,first_name = collab_add)
                 user = profile.user
-                if user in collab.users.all():
-                    messages.success(request, f"'{user.profile.first_name}' already exists")  
+                if user in collab.all():
+                    messages.warning(request, f" adding '{user.profile.first_name}' failed ")  
                 else:  
-                    collab.users.add(user)
+                    collab.add(user)
                     messages.success(request, f"'{user.profile.first_name}' added successfully")
 
             except:
                 messages.info(request, f"'{collab_add}' does not match an existing users")
             
-        else:
-            collab_form = CollabForm(request.POST,instance=collab)
-            if collab_form.is_valid():
-                collab_form.save()
+        # else:
+        #     collab_form = CollabForm(request.POST,instance=collab)
+        #     if collab_form.is_valid():
+        #         collab_form.save()
             
         return redirect('task:detail',slug=slug)
 
@@ -212,7 +215,7 @@ def delete_comment(request,id):
 def remove_collab(request,slug,user_id,dashboard='true'or None):
     user = get_object_or_404(MyUser,id=user_id)
     task = get_object_or_404(Task,slug=slug)
-    task.collabs.users.remove(user)
+    task.collaborators.remove(user)
     if dashboard == 'true':
         return redirect('task:dashboard')
     return redirect('task:detail',slug=slug)

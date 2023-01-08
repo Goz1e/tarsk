@@ -14,19 +14,13 @@
     <p class="text-center"> Collaborations!</p>
     <!--USER COLLABORATIONSJ  -->
     <div class="row justify-content-around ">
-      {% for task in active_tasks %}
+      {% for task in collaborations %}
       {% include "task/card_template.html" with task=task %}
       {% endfor %}
     </div>
     
     <br>
-    <p class="text-center"> Completed tasks!</p>
-    <!--USER COLLABORATIONSJ  -->
-    <div class="row justify-content-around ">
-      {% for task in active_tasks %}
-      {% include "task/card_template.html" with task=task %}
-      {% endfor %}
-    </div>
+    
   </div>
 </section>
 

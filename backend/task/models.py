@@ -25,6 +25,7 @@ class Task(models.Model):
     completed = models.BooleanField(default=False,blank=True)
     deadline = models.DateField(blank=False,null=True)
     edited = models.BooleanField(default=False,blank=True)
+    collaborators = models.ManyToManyField(MyUser,related_name='collabs',related_query_name='collabs')
 
     class Meta:
         ordering = ('deadline','time_stamp','completed')
@@ -42,6 +43,9 @@ class Task(models.Model):
             
     def get_absolute_url(self):
         return reverse('task:detail', kwargs={'slug' : self.slug})
+        
+    def add_comment_url(self):
+        return reverse('task:add_comment', kwargs={'slug' : self.slug})
 
 class Dependencies(models.Model):
     main_task = models.OneToOneField(Task,on_delete=models.CASCADE,blank=True,null=True,related_name='my_dependencies')
@@ -72,4 +76,3 @@ class Collaborations(models.Model):
 
     def __str__(self) :
         return f'collaborators on  {self.primary_task}'
-
