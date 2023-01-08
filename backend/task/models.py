@@ -43,7 +43,7 @@ class Task(models.Model):
             
     def get_absolute_url(self):
         return reverse('task:detail', kwargs={'slug' : self.slug})
-        
+
     def add_comment_url(self):
         return reverse('task:add_comment', kwargs={'slug' : self.slug})
 
@@ -66,13 +66,3 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.text
-
-class Collaborations(models.Model):
-    primary_task = models.OneToOneField(Task,related_name='collabs',on_delete=models.CASCADE)
-    users = models.ManyToManyField(MyUser,related_name='my_collaborations',)
-
-    class Meta:
-        verbose_name_plural = "collaborators"
-
-    def __str__(self) :
-        return f'collaborators on  {self.primary_task}'

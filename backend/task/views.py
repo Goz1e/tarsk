@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render,redirect
 from django.contrib.auth.decorators import login_required
 from native_auth.models import MyUser, Profile
 from .forms import AddCommentForm,TaskCreateForm, TaskUpdateForm
-from .models import Collaborations, Comment, Dependencies, Task
+from .models import Comment, Dependencies, Task
 from django.db.models import Q
 from django.contrib import messages
 # Create your views here.
