@@ -1,0 +1,6 @@
+add change email link to account settings{
+    <li><a href="{% url 'account_email' %}">Change E-mail</a></li>
+}
+
+query_set for user = user_qs (usercreated|collabs).distinct
+only owner can edit 

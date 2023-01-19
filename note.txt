@@ -1,0 +1,20 @@
+UNDERSTANDING DJANGO RESTFRAMEWORK CLASS views
+
+APIView --> 
+subclasses django View class and request is dispatched to hanbler methods,
+    
+GenericAPIView --> 
+by default handles list and detail functionalities. 
+Combines with mixins to create concrete generic views
+
+mixins --> 
+classes that provide action methods (list,create,update) rather than method handlers (get,post,put,patch)
+-ListModelMixin = .list(request, *args, **kwargs)
+-CreatetModelMixin = .create(request, *args, **kwargs)
+-RetrieveModelMixin = .retrive(request, *args, **kwargs)
+-UpdateModelMixin = .Update(request, *args, **kwargs) | .partial_update(request, *args, **kwargs)
+-DestroyModelMixin = .destroy(request, *args, **kwargs)
+
+Concrete API Views --->
+these classes are a combo of of GenericAPIView and mixins to provide crud functionalities
+they provide method handlers and can also provide action methods. 

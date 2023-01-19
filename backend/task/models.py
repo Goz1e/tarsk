@@ -2,6 +2,7 @@ from django.db import models
 from native_auth.models import MyUser
 from django.urls import reverse
 from datetime import datetime
+from django.db.models import Q
 now = datetime.now().date
 
 # Create your models here.
@@ -15,6 +16,15 @@ class TaskQueryset(models.QuerySet):
     def active_tasks(self,user):
         return self.user_tasks(user).filter(completed=False)
 
+    def search(self,user,query):
+        lookup= (Q(title__icontains=query)|
+        Q(description__icontains=query) | Q(slug__icontains=query))
+        qs1 = self.user_tasks(user)
+        if user.is_admin:
+            qs1 = self.all()
+        collabs_qs = user.collabs.all()
+        qs = (qs1 | collabs_qs).distinct()
+        return qs.filter(lookup)
 
 class Task(models.Model):
     title = models.CharField(max_length=200,null=False,blank=False)
@@ -25,7 +35,8 @@ class Task(models.Model):
     completed = models.BooleanField(default=False,blank=True)
     deadline = models.DateField(blank=False,null=True)
     edited = models.BooleanField(default=False,blank=True)
-    collaborators = models.ManyToManyField(MyUser,related_name='collabs',related_query_name='collabs')
+    collaborators = models.ManyToManyField(MyUser,related_name='collabs',related_query_name='collabs', blank=True)
+    dependencies = models.ManyToManyField("Task",related_name='deps',related_query_name='deps', blank=True)
 
     class Meta:
         ordering = ('deadline','time_stamp','completed')
@@ -47,15 +58,15 @@ class Task(models.Model):
     def add_comment_url(self):
         return reverse('task:add_comment', kwargs={'slug' : self.slug})
 
-class Dependencies(models.Model):
-    main_task = models.OneToOneField(Task,on_delete=models.CASCADE,blank=True,null=True,related_name='my_dependencies')
-    dependent_on = models.ManyToManyField(Task,blank=True,related_name='dependants')
+# class Dependencies(models.Model):
+#     main_task = models.OneToOneField(Task,on_delete=models.CASCADE,blank=True,null=True,related_name='my_dependencies')
+#     dependent_on = models.ManyToManyField(Task,blank=True,related_name='dependants')
 
-    class Meta:
-        verbose_name_plural = "dependencies"
+#     class Meta:
+#         verbose_name_plural = "dependencies"
 
-    def __str__(self) :
-        return f'dependencies for {self.main_task}'
+#     def __str__(self) :
+#         return f'dependencies for {self.main_task}'
     
 
 class Comment(models.Model):

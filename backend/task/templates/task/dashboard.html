@@ -4,6 +4,25 @@
 {% load static %}
 <div class="section">
   <div class="container"> <br><br>
+    {% if not qs_exists %}
+    <div class="row  pt-3 pb-0">
+      <div id="imgdiv" class="col-sm-5 text-center">
+        <img class=" image img-responsive"  src="{% static 'images/update.svg' %}"> 
+      </div>
+
+     <div class="col-sm-1">
+     </div>
+
+      <div class="col-sm-4 pt-3">
+        <p class=" text-center h3 fw-light mx-auto mt-3">
+          Create your first task
+        </p>
+        <div class="d-flex justify-content-center gap-2">
+          <a class="btn btn-outline-primary btn-sm" href="{% url 'task:create' %}" role="">create</a>
+        </div>  
+      </div>
+    </div>
+    {% else %}
     <div class="row justify-content-around ">
       {% for task in active_tasks %}
       {% include "task/card_template.html" with task=task %}
@@ -12,13 +31,14 @@
     
     <br>
     <p class="text-center"> Collaborations!</p>
+    <hr>
     <!--USER COLLABORATIONSJ  -->
     <div class="row justify-content-around ">
       {% for task in collaborations %}
       {% include "task/card_template.html" with task=task %}
       {% endfor %}
     </div>
-    
+    {% endif %}
     <br>
     
   </div>

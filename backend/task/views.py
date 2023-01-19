@@ -2,27 +2,29 @@ from django.shortcuts import get_object_or_404, render,redirect
 from django.contrib.auth.decorators import login_required
 from native_auth.models import MyUser, Profile
 from .forms import AddCommentForm,TaskCreateForm, TaskUpdateForm
-from .models import Comment, Dependencies, Task
+from .models import Comment, Task
 from django.db.models import Q
 from django.contrib import messages
 # Create your views here.
 
-@login_required(login_url='native_auth:landing_page')
+@login_required(login_url='landing_page')
 def dashboard(request):
     user = request.user
-    user_tasks = Task.objects.user_tasks(user=user)
-    active_tasks = Task.objects.active_tasks(user) or None
-    completed_tasks = Task.objects.completed_tasks(user) or None
-    user_collabs = user.collabs.all()
+    active_tasks = Task.objects.active_tasks(user)
+    # completed_tasks = Task.objects.completed_tasks(user)
+    user_collabs = user.collabs.all() 
     collaborations = (active_tasks|user_collabs).distinct().exclude(user=user)
-    print(collaborations)
+    
     template_name = 'task/dashboard.html' 
     context = {'title':'dashboard','active_tasks':active_tasks,
-    'completed_tasks':completed_tasks,'collaborations':collaborations,'dashboard':'true'}
+        'collaborations':collaborations,'dashboard':'true'}
+    
+    if bool(active_tasks.exists() or collaborations.exists()):
+        context['qs_exists'] = 'qs_exists'
     return render(request,template_name,context)
 
 
-@login_required(login_url='native_auth:landing_page')
+@login_required(login_url='landing_page')
 def create_task(request):
     user = request.user
     form = TaskCreateForm
@@ -43,7 +45,7 @@ def create_task(request):
     return render(request,template_name,context)
 
 
-@login_required(login_url='native_auth:landing_page')
+@login_required(login_url='landing_page')
 def detail(request,slug):
 
     task = get_object_or_404(Task,slug=slug)
@@ -55,7 +57,7 @@ def detail(request,slug):
 
     task_collabs = task.collaborators.all().exclude(pk=task.user.pk)
     dep_qs = Task.objects.filter(slug=task.slug)
-    task_dep = task.my_dependencies.dependent_on.all()
+    task_dep = task.deps.all()
     
     context = {'title':f'detail | {task.title}','task':task,'comments':comments,
     'qs':qs,'comment_form':form, 'collabs':task_collabs,
@@ -68,18 +70,19 @@ def detail(request,slug):
         
     try:
         task_qs = Task.objects.filter(slug = task.slug)
-        dep = task.my_dependencies
-        dep_qs = dep.dependent_on.exclude(pk__in=task_qs)
+        dep = task.deps
+        dep_qs = dep.all().exclude(pk__in=task_qs)
 
         context['dep_qs']=dep_qs
     except:
         pass
+    print(request)
 
     template_name = 'task/detail.html'
     return render(request,template_name,context)
 
 
-@login_required(login_url='native_auth:landing_page')
+@login_required(login_url='landing_page')
 def update(request,slug):
     
     context = {}
@@ -109,22 +112,22 @@ def update(request,slug):
     return render(request,template_name,context)
 
 
-@login_required(login_url='native_auth:landing_page')
-def update_dependencies(request,slug):    
+# @login_required(login_url='landing_page')
+# def update_dependencies(request,slug):    
     
-    if request.POST:
-        task = get_object_or_404(Task,slug=slug)
-        dep = get_object_or_404(Dependencies,main_task=task)
-        dep_form = DependenciesForm(request.POST or None, instance=dep)
+#     if request.POST:
+#         task = get_object_or_404(Task,slug=slug)
+#         dep = get_object_or_404(Dependencies,main_task=task)
+#         dep_form = DependenciesForm(request.POST or None, instance=dep)
 
-        if dep_form.is_valid():
-            dependency = dep_form.save(commit=False)
-            dependency.save()
-            dep_form.save_m2m()
-            return redirect('task:detail',slug=slug)
+#         if dep_form.is_valid():
+#             dependency = dep_form.save(commit=False)
+#             dependency.save()
+#             dep_form.save_m2m()
+#             return redirect('task:detail',slug=slug)
 
 
-@login_required(login_url='native_auth:landing_page')
+@login_required(login_url='landing_page')
 def update_collab(request,slug):
     
     if request.POST:
@@ -152,7 +155,7 @@ def update_collab(request,slug):
         return redirect('task:detail',slug=slug)
 
 
-@login_required(login_url='native_auth:landing_page')
+@login_required(login_url='landing_page')
 def completed(request,slug):
     
     obj = get_object_or_404(Task,slug=slug)
@@ -161,7 +164,7 @@ def completed(request,slug):
     return redirect('task:detail',slug=obj.slug)
 
 
-@login_required(login_url='native_auth:landing_page')
+@login_required(login_url='landing_page')
 def add_comment(request,slug):
     obj = get_object_or_404(Task,slug=slug)
     form = AddCommentForm
@@ -178,7 +181,7 @@ def add_comment(request,slug):
 
     
 
-@login_required(login_url='native_auth:landing_page')
+@login_required(login_url='landing_page')
 def search(request):
     query = request.GET.get('q')
     qs = Task.objects.all()
@@ -194,7 +197,7 @@ def search(request):
     return render(request,template_name,context)
 
 
-@login_required(login_url='native_auth:landing_page')
+@login_required(login_url='landing_page')
 def delete_task(request,slug):
     task = get_object_or_404(Task,slug=slug)
     if task.user == request.user:
@@ -221,12 +224,12 @@ def remove_collab(request,slug,user_id,dashboard='true'or None):
     return redirect('task:detail',slug=slug)
 
 
-@login_required(login_url='native_auth:landing_page')
+@login_required(login_url='landing_page')
 def update_dep(request,slug):
     
     if request.POST:
         task = get_object_or_404(Task,slug=slug)
-        dependency = task.my_dependencies
+        dependency = task.deps
 
         try:
             dep_task = get_object_or_404(Task,title=request.POST.get('dep_form'))
@@ -235,22 +238,20 @@ def update_dep(request,slug):
                 messages.info(request, "you cannot add current task as dependency")
                 return redirect('task:detail',slug=slug)
 
-            if dep_task in dependency.dependent_on.all():
+            if dep_task in dependency.all():
                 messages.success(request, f"'{dep_task}' already exists")  
             else:  
-                dependency.dependent_on.add(dep_task)
+                dependency.add(dep_task)
                 messages.success(request, "dependency added successfully")
         except:
             
             messages.success(request, f"failed to add to dependencies")  
-
-    
         return redirect('task:detail',slug=slug)
 
 def remove_dep(request,slug,dep_id):
     dep_task = get_object_or_404(Task,id=dep_id)
     task = get_object_or_404(Task,slug=slug)
-    task.my_dependencies.dependent_on.remove(dep_task)
+    task.deps.remove(dep_task)
     return redirect('task:detail',slug=slug)
 
 def test(request):
